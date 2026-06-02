@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entraîneur de verbes français</title>
+  <link rel="icon" type="image/png" href="icons/icon-128.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ ÉCRAN DE CONFIGURATION ════════════════════════════════════════════════ -->
+<div id="screen-setup" class="screen active">
+  <header>
+    <h1>🇫🇷 Entraîneur de verbes</h1>
+    <p class="subtitle">Choisis tes verbes et tes temps, puis lance le quiz !</p>
+    <button id="preset-btn" class="btn-preset">⭐ Charger la sélection « Semaines 33–34 »</button>
+  </header>
+
+  <div class="setup-grid">
+
+    <!-- Choix des temps -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Temps</h2>
+        <div class="select-btns">
+          <button class="btn-link" id="tense-all">Tout</button>
+          <button class="btn-link" id="tense-none">Aucun</button>
+        </div>
+      </div>
+      <div id="tense-list" class="checkbox-list"></div>
+    </section>
+
+    <!-- Choix des verbes -->
+    <section class="card verb-card">
+      <div class="card-header">
+        <h2>Verbes <span id="verb-count-badge" class="badge">0</span></h2>
+        <div class="select-btns">
+          <button class="btn-link" id="verb-all">Tout</button>
+          <button class="btn-link" id="verb-none">Aucun</button>
+        </div>
+      </div>
+      <div class="verb-search-row">
+        <input type="text" id="verb-search" placeholder="Rechercher un verbe…" autocomplete="off">
+      </div>
+      <div class="group-filter-row" id="group-filter-row"></div>
+      <div id="verb-list" class="verb-checkbox-list"></div>
+    </section>
+
+  </div>
+
+  <!-- Réglages du quiz -->
+  <div class="quiz-settings">
+    <label>
+      Questions par quiz :
+      <input type="number" id="q-count" value="20" min="5" max="200">
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="show-english" checked>
+      Afficher le sens (anglais)
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="accent-keyboard" checked>
+      Aide aux accents
+    </label>
+  </div>
+
+  <button id="start-btn" class="btn-primary" disabled>Commencer le quiz →</button>
+</div>
+
+<!-- ══ ÉCRAN DU QUIZ ═════════════════════════════════════════════════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-top">
+    <button id="quit-btn" class="btn-ghost">← Menu</button>
+    <div class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"><div id="progress-fill"></div></div>
+      <span id="progress-label">1 / 20</span>
+    </div>
+    <div class="score-display">
+      <span id="score-correct" class="score-green">0</span>
+      <span class="score-sep">/</span>
+      <span id="score-total">0</span>
+    </div>
+  </div>
+
+  <div class="quiz-card" id="quiz-card">
+    <div class="q-tense-tag" id="q-tense-tag"></div>
+    <div class="q-subject" id="q-subject"></div>
+    <div class="q-infinitive" id="q-infinitive"></div>
+    <div class="q-english" id="q-english"></div>
+
+    <div id="accent-bar" class="accent-bar"></div>
+
+    <div class="answer-row">
+      <input type="text" id="answer-input" placeholder="Tape la forme conjuguée…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button id="submit-btn" class="btn-primary">Vérifier</button>
+    </div>
+
+    <button id="skip-btn" class="btn-skip">Passer cette question →</button>
+
+    <div id="feedback" class="feedback hidden">
+      <span id="feedback-icon"></span>
+      <span id="feedback-msg"></span>
+    </div>
+
+    <button id="next-btn" class="btn-secondary hidden">Suivant →</button>
+  </div>
+</div>
+
+<!-- ══ ÉCRAN DES RÉSULTATS ═══════════════════════════════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-header">
+    <h2>Quiz terminé !</h2>
+    <div class="results-score">
+      <span id="final-correct"></span> / <span id="final-total"></span>
+    </div>
+    <div id="final-grade" class="final-grade"></div>
+  </div>
+
+  <div id="results-list" class="results-list"></div>
+
+  <div class="results-actions">
+    <button id="retry-btn" class="btn-secondary">Recommencer</button>
+    <button id="menu-btn" class="btn-primary">← Menu</button>
+  </div>
+</div>
+
+<script src="verbs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
