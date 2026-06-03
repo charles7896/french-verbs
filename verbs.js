@@ -72,12 +72,14 @@ function conjugateIR(stem, infinitive) {
 }
 
 function conjugateRE(stem, infinitive) {
-  // vendre-type
+  // vendre-type. The future/conditional stem drops the infinitive's final "e":
+  // rendre -> rendr -> rendrai, rendrons, rendront ...
+  const fut = infinitive.slice(0, -1);
   return {
     present:             [stem+'s',   stem+'s',   stem,        stem+'ons',  stem+'ez',   stem+'ent'],
     imparfait:           [stem+'ais', stem+'ais', stem+'ait',  stem+'ions', stem+'iez',  stem+'aient'],
-    futurSimple:         [infinitive+'ai', infinitive+'as', infinitive+'a', infinitive+'ons', infinitive+'ez', infinitive+'ont'],
-    conditionnelPresent: [infinitive+'ais', infinitive+'ais', infinitive+'ait', infinitive+'ions', infinitive+'iez', infinitive+'aient'],
+    futurSimple:         [fut+'ai',  fut+'as',  fut+'a',   fut+'ons',  fut+'ez',   fut+'ont'],
+    conditionnelPresent: [fut+'ais', fut+'ais', fut+'ait', fut+'ions', fut+'iez',  fut+'aient'],
     passeSimple:         [stem+'is',  stem+'is',  stem+'it',   stem+'îmes', stem+'îtes', stem+'irent'],
     subjonctifPresent:   [stem+'e',   stem+'es',  stem+'e',    stem+'ions', stem+'iez',  stem+'ent'],
     imperatif:           [null,       stem+'s',   null,         stem+'ons',  stem+'ez',   null],
