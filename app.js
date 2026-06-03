@@ -187,15 +187,17 @@ function getSubject(q) {
   return SUBJECTS[q.personIdx];
 }
 
-// All answers we accept as correct: the stored form plus any valid alternate
-// (e.g. "paye" alongside "paie", "puis" alongside "peux").
+// All answers we accept as correct: the stored form plus any valid alternate —
+// spelling variants ("paye"/"paie", "puis"/"peux") and, for être verbs, every
+// valid gender/number agreement ("suis allé"/"suis allée", "sommes allés"/"…allées").
 function acceptedAnswers(q) {
   const list = [getAnswer(q)];
-  const alt = q.verb.alt && q.verb.alt[q.tense];
-  if (alt && !TENSES[q.tense].single && alt[q.personIdx] != null) {
-    list.push(alt[q.personIdx]);
+  const altT = q.verb.alt && q.verb.alt[q.tense];
+  if (altT && !TENSES[q.tense].single) {
+    const entry = altT[q.personIdx];
+    if (entry != null) (Array.isArray(entry) ? entry : [entry]).forEach(x => list.push(x));
   }
-  return list.map(normalise);
+  return list.map(normalise).filter(Boolean);
 }
 
 // Full, naturally-elided answer for display: "j'ai fait", "qu'il/elle aille".

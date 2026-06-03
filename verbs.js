@@ -133,6 +133,30 @@ function buildVerb(def) {
       .forEach(t => { forms[t] = forms[t].map((v, i) => (i === 2 ? v : null)); });
   }
 
+  // ── Accepted-answer alternates (so an equally-correct answer is never wrong) ──
+  let alt = def.alt ? Object.assign({}, def.alt) : null;
+
+  // For être verbs, every valid gender/number agreement of the participle is
+  // accepted in compound tenses. The il/elle & ils/elles pronouns are shown
+  // combined (so masc & fem are both right), and vous may be singular or plural.
+  if (aux === 'être' && !def.impersonal) {
+    const p = def.participle, fSg = p + 'e', mPl = p + 's', fPl = p + 'es';
+    const AUXTENSE = { passeCompose: 'present', plusQueParfait: 'imparfait',
+                       futurAnterieur: 'futurSimple', conditionnelPasse: 'conditionnelPresent' };
+    alt = alt || {};
+    for (const [tense, at] of Object.entries(AUXTENSE)) {
+      const af = AUX[aux][at];
+      alt[tense] = [
+        [af[0] + ' ' + fSg],                                       // je   : + fém. sg
+        [af[1] + ' ' + fSg],                                       // tu   : + fém. sg
+        [af[2] + ' ' + fSg],                                       // il/elle : + fém. sg
+        [af[3] + ' ' + fPl],                                       // nous : + fém. pl
+        [af[4] + ' ' + p, af[4] + ' ' + fSg, af[4] + ' ' + fPl],   // vous : + masc sg, fém sg, fém pl
+        [af[5] + ' ' + fPl],                                       // ils/elles : + fém. pl
+      ];
+    }
+  }
+
   return {
     infinitive:  def.infinitive,
     english:     def.english,
@@ -141,7 +165,7 @@ function buildVerb(def) {
     participle:  def.participle,
     impersonal:  def.impersonal || false,
     forms,
-    alt:         def.alt || null,   // additional accepted spellings (e.g. paye/paie)
+    alt,
   };
 }
 
