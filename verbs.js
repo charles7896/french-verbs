@@ -39,9 +39,15 @@ const AUX = {
   },
 };
 
-// For être verbs, the participle agrees. We store the masc-sing form and note it.
+// For être-auxiliary verbs, the past participle agrees in number with the
+// subject — plural for nous/vous/ils (indices 3,4,5). We use the masculine
+// form (the il/elle and ils/elles pronouns are displayed combined, so gender
+// is left in the default masculine). Avoir verbs keep the invariable participle.
 function buildCompound(aux, auxTense, participle) {
-  return AUX[aux][auxTense].map(f => f + ' ' + participle);
+  const plural = /[sx]$/.test(participle) ? participle : participle + 's';
+  return AUX[aux][auxTense].map((f, i) =>
+    f + ' ' + (aux === 'être' && i >= 3 ? plural : participle)
+  );
 }
 
 // ─── Regular conjugation generators ──────────────────────────────────────────
@@ -826,7 +832,7 @@ const IRREGULAR = [
       present:             ['couvre','couvres','couvre','couvrons','couvrez','couvrent'],
       imparfait:           ['couvrais','couvrais','couvrait','couvrions','couvriez','couvraient'],
       futurSimple:         ['couvrirai','couvriras','couvrira','couvrirons','couvrirez','couvriront'],
-      conditionnelPresent: ['couvririais','couvririais','couvrirait','couvririons','couvririez','couvriraient'],
+      conditionnelPresent: ['couvrirais','couvrirais','couvrirait','couvririons','couvririez','couvriraient'],
       passeSimple:         ['couvris','couvris','couvrit','couvrîmes','couvrîtes','couvrirent'],
       subjonctifPresent:   ['couvre','couvres','couvre','couvrions','couvriez','couvrent'],
       imperatif:           [null,'couvre',null,'couvrons','couvrez',null],
