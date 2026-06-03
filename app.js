@@ -216,6 +216,21 @@ function fullAnswer(q, form) {
   return subj + ' ' + form;
 }
 
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Renders the natural answer with the pronoun/elision DIMMED and the conjugated
+// form (the part the student actually types) HIGHLIGHTED — so "nous aimons" and
+// "j'aime" make clear that only "aimons" / "aime" goes in the box.
+function answerHTML(q, form) {
+  const full   = fullAnswer(q, form);
+  const prefix = full.slice(0, full.length - form.length);
+  const pre    = prefix ? `<span class="ans-prefix">${escapeHTML(prefix)}</span>` : '';
+  return pre + `<span class="ans-form">${escapeHTML(form)}</span>`;
+}
+
 function startQuiz() {
   state.questions = generateQuestions();
   if (state.questions.length === 0) {
@@ -321,9 +336,11 @@ function checkAnswer() {
   const fb = $('feedback');
   fb.className = 'feedback ' + (isRight ? 'correct' : 'wrong');
   $('feedback-icon').textContent = isRight ? '✓' : '✗';
-  $('feedback-msg').textContent  = isRight
-    ? 'Correct !'
-    : `La réponse est : ${fullAnswer(q, rightForm)}`;
+  if (isRight) {
+    $('feedback-msg').textContent = 'Correct !';
+  } else {
+    $('feedback-msg').innerHTML = 'La réponse est : ' + answerHTML(q, rightForm);
+  }
 
   $('answer-input').className = isRight ? 'correct' : 'wrong';
   $('answer-input').disabled  = true;
@@ -340,7 +357,7 @@ function checkAnswer() {
     correct: isRight,
     question: label,
     yourAnswer: answer,
-    rightAnswer: fullAnswer(q, rightForm),
+    rightHtml: answerHTML(q, rightForm),
   });
 }
 
@@ -355,7 +372,7 @@ function skipQuestion() {
   const fb = $('feedback');
   fb.className = 'feedback skipped';
   $('feedback-icon').textContent = '↷';
-  $('feedback-msg').textContent  = `Passé — la réponse est : ${fullAnswer(q, rightForm)}`;
+  $('feedback-msg').innerHTML = 'Passé — la réponse est : ' + answerHTML(q, rightForm);
 
   $('answer-input').disabled = true;
   $('submit-btn').disabled   = true;
@@ -371,7 +388,7 @@ function skipQuestion() {
     skipped: true,
     question: label,
     yourAnswer: '',
-    rightAnswer: fullAnswer(q, rightForm),
+    rightHtml: answerHTML(q, rightForm),
   });
 }
 
@@ -408,11 +425,11 @@ function showResults() {
     const icon = r.skipped ? '↷' : (r.correct ? '✓' : '✗');
     let answerHtml;
     if (r.correct) {
-      answerHtml = `<span class="correct-ans">${r.rightAnswer}</span>`;
+      answerHtml = `<span class="correct-ans">${r.rightHtml}</span>`;
     } else if (r.skipped) {
-      answerHtml = `<span class="skip-note">passé</span> → <span class="correct-ans">${r.rightAnswer}</span>`;
+      answerHtml = `<span class="skip-note">passé</span> → <span class="correct-ans">${r.rightHtml}</span>`;
     } else {
-      answerHtml = `<span class="your-ans">${r.yourAnswer || '(vide)'}</span> → <span class="correct-ans">${r.rightAnswer}</span>`;
+      answerHtml = `<span class="your-ans">${escapeHTML(r.yourAnswer) || '(vide)'}</span> → <span class="correct-ans">${r.rightHtml}</span>`;
     }
     const item = document.createElement('div');
     item.className = 'result-item ' + cls;

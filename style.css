@@ -252,6 +252,11 @@ header h1 { font-size: 2rem; color: var(--blue); }
 .feedback.correct { background: #f0fdf4; color: var(--green);  border: 1px solid #bbf7d0; }
 .feedback.wrong   { background: #fef2f2; color: var(--red);    border: 1px solid #fecaca; }
 .feedback.skipped { background: #fffbeb; color: var(--yellow); border: 1px solid #fde68a; }
+
+/* In a revealed answer, dim the pronoun/elision and highlight the form to type */
+.ans-prefix { opacity: .5; font-weight: 500; }
+.ans-form   { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
 #next-btn { display: block; margin: 0 auto; }
 #next-btn.hidden { display: none; }
 
