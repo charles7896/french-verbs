@@ -187,6 +187,33 @@ function getSubject(q) {
   return SUBJECTS[q.personIdx];
 }
 
+// All answers we accept as correct: the stored form plus any valid alternate
+// (e.g. "paye" alongside "paie", "puis" alongside "peux").
+function acceptedAnswers(q) {
+  const list = [getAnswer(q)];
+  const alt = q.verb.alt && q.verb.alt[q.tense];
+  if (alt && !TENSES[q.tense].single && alt[q.personIdx] != null) {
+    list.push(alt[q.personIdx]);
+  }
+  return list.map(normalise);
+}
+
+// Full, naturally-elided answer for display: "j'ai fait", "qu'il/elle aille".
+const VOWEL_START = /^[aàâäeéèêëiîïoôöuùûüh]/i;
+function fullAnswer(q, form) {
+  const tmeta = TENSES[q.tense];
+  if (tmeta.single || q.tense === 'imperatif') return form; // participles / imperative: no subject
+  let subj = getSubject(q);
+  if (q.tense === 'subjonctifPresent') {
+    if (/^(il|elle|on|ils|elles)/.test(subj)) subj = "qu'" + subj;       // qu'il/elle
+    else subj = 'que ' + subj;                                          // que je / que tu …
+  }
+  if (/je$/.test(subj) && VOWEL_START.test(form)) {                     // je → j'
+    return subj.replace(/je$/, "j'") + form;
+  }
+  return subj + ' ' + form;
+}
+
 function startQuiz() {
   state.questions = generateQuestions();
   if (state.questions.length === 0) {
@@ -284,8 +311,7 @@ function checkAnswer() {
   const q          = state.questions[state.current];
   const rightForm  = getAnswer(q);
   const answer     = normalise($('answer-input').value);
-  const correct    = normalise(rightForm);
-  const isRight    = answer === correct;
+  const isRight    = acceptedAnswers(q).includes(answer);
 
   if (isRight) state.correct++;
 
@@ -295,7 +321,7 @@ function checkAnswer() {
   $('feedback-icon').textContent = isRight ? '✓' : '✗';
   $('feedback-msg').textContent  = isRight
     ? 'Correct !'
-    : `La réponse est : ${rightForm}`;
+    : `La réponse est : ${fullAnswer(q, rightForm)}`;
 
   $('answer-input').className = isRight ? 'correct' : 'wrong';
   $('answer-input').disabled  = true;
@@ -312,7 +338,7 @@ function checkAnswer() {
     correct: isRight,
     question: label,
     yourAnswer: answer,
-    rightAnswer: rightForm,
+    rightAnswer: fullAnswer(q, rightForm),
   });
 }
 
@@ -327,7 +353,7 @@ function skipQuestion() {
   const fb = $('feedback');
   fb.className = 'feedback skipped';
   $('feedback-icon').textContent = '↷';
-  $('feedback-msg').textContent  = `Passé — la réponse est : ${rightForm}`;
+  $('feedback-msg').textContent  = `Passé — la réponse est : ${fullAnswer(q, rightForm)}`;
 
   $('answer-input').disabled = true;
   $('submit-btn').disabled   = true;
@@ -343,7 +369,7 @@ function skipQuestion() {
     skipped: true,
     question: label,
     yourAnswer: '',
-    rightAnswer: rightForm,
+    rightAnswer: fullAnswer(q, rightForm),
   });
 }
 

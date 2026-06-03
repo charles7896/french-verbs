@@ -141,6 +141,7 @@ function buildVerb(def) {
     participle:  def.participle,
     impersonal:  def.impersonal || false,
     forms,
+    alt:         def.alt || null,   // additional accepted spellings (e.g. paye/paie)
   };
 }
 
@@ -382,6 +383,14 @@ const ER_SPELLING = [
       subjonctifPresent:   ['essaie','essaies','essaie','essayions','essayiez','essaient'],
       imperatif:           [null,'essaie',null,'essayons','essayez',null],
     },
+    // -ayer verbs accept both spellings (essaie / essaye) — both are correct
+    alt: {
+      present:             ['essaye','essayes','essaye',null,null,'essayent'],
+      futurSimple:         ['essayerai','essayeras','essayera','essayerons','essayerez','essayeront'],
+      conditionnelPresent: ['essayerais','essayerais','essayerait','essayerions','essayeriez','essayeraient'],
+      subjonctifPresent:   ['essaye','essayes','essaye',null,null,'essayent'],
+      imperatif:           [null,'essaye',null,null,null,null],
+    },
   },
   {
     infinitive: 'payer', english: 'to pay',
@@ -394,6 +403,14 @@ const ER_SPELLING = [
       passeSimple:         ['payai','payas','paya','payâmes','payâtes','payèrent'],
       subjonctifPresent:   ['paie','paies','paie','payions','payiez','paient'],
       imperatif:           [null,'paie',null,'payons','payez',null],
+    },
+    // -ayer verbs accept both spellings (paie / paye) — both are correct
+    alt: {
+      present:             ['paye','payes','paye',null,null,'payent'],
+      futurSimple:         ['payerai','payeras','payera','payerons','payerez','payeront'],
+      conditionnelPresent: ['payerais','payerais','payerait','payerions','payeriez','payeraient'],
+      subjonctifPresent:   ['paye','payes','paye',null,null,'payent'],
+      imperatif:           [null,'paye',null,null,null,null],
     },
   },
   {
@@ -563,6 +580,8 @@ const IRREGULAR = [
       subjonctifPresent:   ['puisse','puisses','puisse','puissions','puissiez','puissent'],
       imperatif:           [null,null,null,null,null,null],
     },
+    // "je puis" is an accepted (literary) variant of "je peux"
+    alt: { present: ['puis',null,null,null,null,null] },
   },
   {
     infinitive: 'vouloir', english: 'to want',
