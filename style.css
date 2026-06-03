@@ -257,6 +257,10 @@ header h1 { font-size: 2rem; color: var(--blue); }
 .ans-prefix { opacity: .5; font-weight: 500; }
 .ans-form   { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 
+/* Instruction telling the student to type only the conjugated form */
+.input-hint { text-align: center; color: var(--muted); font-size: .8rem; margin: 0 0 12px; }
+.input-hint b { color: var(--blue); font-weight: 700; }
+
 #next-btn { display: block; margin: 0 auto; }
 #next-btn.hidden { display: none; }
 
